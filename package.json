@@ -1,0 +1,293 @@
+{
+	"name": "simbachain-vscode-extension",
+	"displayName": "SIMBAChain VSCode Extension",
+	"description": "SIMBAChain VSCode Extension",
+	"version": "1.0.0",
+	"publisher": "SIMBAChain",
+	"repository": "https://github.com/SIMBAChain/simbachain-vscode-extension",
+	"license": "MIT",
+	"enableProposedApi": true,
+	"engines": {
+		"vscode": "^1.42.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onView:simbaContracts",
+		"onCommand:simbaContracts.showWelcomePage",
+		"onCommand:simbaContracts.compile",
+		"onCommand:simbaContracts.build",
+		"onCommand:simbaContracts.upload"
+	],
+	"main": "./dist/extension",
+	"contributes": {
+		"configuration": {
+			"title": "SIMBA Chain",
+			"properties": {
+				"simbachain.url": {
+					"type": "string",
+					"default": "https://my-sem.example.com/v2/",
+					"description": "The SIMBA Platform URL"
+				}
+			}
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "package-explorer",
+					"title": "Simbachain Contracts",
+					"icon": "media/SIMBA-S.svg"
+				}
+			]
+		},
+		"views": {
+			"package-explorer": [
+				{
+					"id": "simbaContracts",
+					"name": "Contracts"
+				},
+				{
+					"id": "simbaDeployed",
+					"name": "Deployed"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "simbaContracts.showWelcomePage",
+				"title": "Show Welcome Page",
+				"category": "SIMBAChain"
+			},
+			{
+				"command": "simbaContracts.login",
+				"title": "Login",
+				"category": "SIMBAChain",
+				"icon": {
+					"light": "resources/light/sign-in-alt.svg",
+					"dark": "resources/dark/sign-in-alt.svg"
+				}
+			},
+			{
+				"command": "simbaContracts.compile",
+				"title": "Compile Truffle Project",
+				"category": "SIMBAChain"
+			},
+			{
+				"command": "simbaContracts.build",
+				"title": "Build Truffle Project",
+				"category": "SIMBAChain"
+			},
+			{
+				"command": "simbaContracts.upload",
+				"title": "Upload Truffle Project to SIMBAChain",
+				"category": "SIMBAChain"
+			},
+			{
+				"command": "simbaContracts.logout",
+				"category": "SIMBAChain",
+				"title": "Logout"
+			},
+			{
+				"command": "simbaContracts.editEntry",
+				"title": "Edit",
+				"category": "SIMBAChain",
+				"icon": {
+					"light": "resources/light/edit.svg",
+					"dark": "resources/dark/edit.svg"
+				}
+			},
+			{
+				"command": "simbaContracts.uploadEntry",
+				"category": "SIMBAChain",
+				"title": "Upload Project",
+				"icon": {
+					"light": "resources/light/upload.svg",
+					"dark": "resources/dark/upload.svg"
+				}
+			},
+			{
+				"command": "simbaContracts.refreshEntry",
+				"title": "Refresh",
+				"category": "SIMBAChain",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "simbaContracts.deleteEntry",
+				"category": "SIMBAChain",
+				"title": "Delete"
+			},
+			{
+				"command": "simbaDeployed.refreshEntry",
+				"category": "SIMBAChain",
+				"title": "Refresh",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "simbaDeployed.login",
+				"category": "SIMBAChain",
+				"title": "Login",
+				"icon": {
+					"light": "resources/light/sign-in-alt.svg",
+					"dark": "resources/dark/sign-in-alt.svg"
+				}
+			},
+			{
+				"command": "simbaDeployed.logout",
+				"category": "SIMBAChain",
+				"title": "Logout"
+			},
+			{
+				"command": "simbaDeployed.deployEntry",
+				"category": "SIMBAChain",
+				"title": "Deploy Project",
+				"icon": {
+					"light": "resources/light/upload.svg",
+					"dark": "resources/dark/upload.svg"
+				}
+			},
+			{
+				"command": "simbaDeployed.viewApp",
+				"title": "View",
+				"category": "SIMBAChain",
+				"icon": {
+					"light": "resources/light/play-circle.svg",
+					"dark": "resources/dark/play-circle.svg"
+				}
+			},
+			{
+				"command": "simbaDeployed.deployApp",
+				"title": "View",
+				"category": "SIMBAChain",
+				"icon": {
+					"light": "resources/light/upload.svg",
+					"dark": "resources/dark/upload.svg"
+				}
+			},
+			{
+				"command": "simbaDeployed.viewContract",
+				"title": "View",
+				"category": "SIMBAChain",
+				"icon": {
+					"light": "resources/light/play-circle.svg",
+					"dark": "resources/dark/play-circle.svg"
+				}
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "simbaContracts.showWelcomePage",
+					"when": "view == simbaContracts"
+				},
+				{
+					"command": "simbaContracts.uploadEntry",
+					"when": "view == simbaContracts && simbaLoggedIn",
+					"group": "navigation"
+				},
+				{
+					"command": "simbaContracts.refreshEntry",
+					"when": "view == simbaContracts && simbaLoggedIn",
+					"group": "navigation"
+				},
+				{
+					"command": "simbaContracts.login",
+					"when": "view == simbaContracts && !simbaLoggedIn",
+					"group": "navigation"
+				},
+				{
+					"command": "simbaContracts.logout",
+					"when": "view == simbaContracts && simbaLoggedIn"
+				},
+				{
+					"command": "simbaDeployed.deployEntry",
+					"when": "view == simbaDeployed && simbaLoggedIn",
+					"group": "navigation"
+				},
+				{
+					"command": "simbaDeployed.refreshEntry",
+					"when": "view == simbaDeployed && simbaLoggedIn",
+					"group": "navigation"
+				},
+				{
+					"command": "simbaDeployed.login",
+					"when": "view == simbaDeployed && !simbaLoggedIn",
+					"group": "navigation"
+				},
+				{
+					"command": "simbaDeployed.logout",
+					"when": "view == simbaDeployed && simbaLoggedIn"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "simbaContracts.editEntry",
+					"when": "view == simbaContracts && viewItem == contract",
+					"group": "inline"
+				},
+				{
+					"command": "simbaContracts.deleteEntry",
+					"when": "view == simbaContracts && viewItem == contract"
+				},
+				{
+					"command": "simbaDeployed.viewApp",
+					"when": "view == simbaDeployed && viewItem == application",
+					"group": "inline"
+				},
+				{
+					"command": "simbaDeployed.deployApp",
+					"when": "view == simbaDeployed && viewItem == application",
+					"group": "inline"
+				},
+				{
+					"command": "simbaDeployed.viewContract",
+					"when": "view == simbaDeployed && viewItem == deployedcontract",
+					"group": "inline"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"publish": "vsce publish",
+		"package": "vsce package",
+		"vscode:prepublish": "webpack --mode production",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
+		"test-compile": "tsc -p ./",
+		"lint": "tslint -p ./"
+	},
+	"devDependencies": {
+		"@types/mkdirp": "^0.5.2",
+		"@types/node": "^10.12.21",
+		"@types/rimraf": "^2.0.2",
+		"@types/vscode": "^1.42.0",
+		"ts-loader": "^6.2.1",
+		"tslint": "^5.12.1",
+		"typescript": "^3.5.1",
+		"vsce": "^1.81.1",
+		"webpack": "^4.42.0",
+		"webpack-cli": "^3.3.11"
+	},
+	"dependencies": {
+		"@types/configstore": "^4.0.0",
+		"@types/crypto-js": "^3.1.43",
+		"configstore": "^5.0.1",
+		"crypto-js": "^4.0.0",
+		"crypto-random-string": "^3.2.0",
+		"ftp": "^0.3.10",
+		"json-api-client": "^5.0.1",
+		"jsonc-parser": "^0.4.2",
+		"mkdirp": "^0.5.1",
+		"polka": "^0.5.2",
+		"request": "^2.88.2",
+		"request-promise": "^4.2.5",
+		"rimraf": "^2.6.2",
+		"which": "^2.0.2"
+	}
+}
