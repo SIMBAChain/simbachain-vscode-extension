@@ -2,7 +2,7 @@
 	"name": "simbachain-vscode-extension",
 	"displayName": "SIMBAChain VSCode Extension",
 	"description": "SIMBAChain VSCode Extension",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"publisher": "SIMBAChain",
 	"repository": "https://github.com/SIMBAChain/simbachain-vscode-extension",
 	"license": "MIT",
@@ -15,6 +15,7 @@
 	],
 	"activationEvents": [
 		"onView:simbaContracts",
+		"onView:simbaDeployed",
 		"onCommand:simbaContracts.showWelcomePage",
 		"onCommand:simbaContracts.compile",
 		"onCommand:simbaContracts.build",
@@ -22,16 +23,6 @@
 	],
 	"main": "./dist/extension",
 	"contributes": {
-		"configuration": {
-			"title": "SIMBA Chain",
-			"properties": {
-				"simbachain.url": {
-					"type": "string",
-					"default": "https://my-sem.example.com/v2/",
-					"description": "The SIMBA Platform URL"
-				}
-			}
-		},
 		"viewsContainers": {
 			"activitybar": [
 				{
@@ -255,7 +246,7 @@
 	},
 	"scripts": {
 		"publish": "vsce publish",
-		"package": "vsce package",
+		"package": "npm run lint && npm run webpack && vsce package",
 		"vscode:prepublish": "webpack --mode production",
 		"webpack": "webpack --mode development",
 		"webpack-dev": "webpack --mode development --watch",
@@ -288,6 +279,7 @@
 		"request": "^2.88.2",
 		"request-promise": "^4.2.5",
 		"rimraf": "^2.6.2",
+		"synchronized-promise": "^0.3.1",
 		"which": "^2.0.2"
 	}
 }

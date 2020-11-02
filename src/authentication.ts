@@ -6,8 +6,10 @@ import * as http from 'http';
 import * as polka from 'polka';
 import * as CryptoJS from 'crypto-js';
 import {Refreshable} from './util';
+import sp from 'synchronized-promise';
 
 import * as Configstore from 'configstore';
+import { getSimbaConfig } from './truffle/config';
 
 export const AUTHKEY = 'SIMBAAUTH';
 
@@ -15,15 +17,11 @@ export const AUTHKEY = 'SIMBAAUTH';
 export class LoginServer extends vscode.Disposable {
 	private readonly closeTimeout: number = 5 * 1000;
 	private port: number = 22315;
-	private scope: string = 'read_write';
 	private server: http.Server;
 	private state: string;
-	private clientID: string;
 	private context: vscode.ExtensionContext;
 	private refreshables: Refreshable[];
 	private redirectUri: string;
-	private tokenUrl = 'http://localhost:8080/v1/oauth/tokens';
-	private baseUrl = <string>vscode.workspace.getConfiguration("simbachain").get('url');
 	private pkceVerifier: string;
 	private pkceChallenge: string;
 
@@ -33,7 +31,6 @@ export class LoginServer extends vscode.Disposable {
 			this.server.close();
 		});
 
-		this.clientID = 'vscode';
 		this.context = context;
 
 		vscode.commands.executeCommand('setContext', 'simbaLoggedIn', this.isLoggedIn);
@@ -54,18 +51,39 @@ export class LoginServer extends vscode.Disposable {
 		});
 	}
 
-	private _authorizeUrl = 'http://localhost:8080/web/authorize';
+	get tokenUrl(): string {
+		return this.getConfig('tokenUrl');
+	}
+
+	get clientID(): string {
+		return this.getConfig('clientID');
+	}
+
+	get scope(): string {
+		return this.getConfig('authScope');
+	}
+
+	get baseUrl(): string {
+		return this.getConfig('baseUrl');
+	}
 
 	get authorizeUrl(): string {
+		const url = this.getConfig('authorizeUrl');
 		this.generatePKCE();
-		return `${this._authorizeUrl}?client_id=${this.clientID}&redirect_uri=${this.redirectUri}&response_type=code&state=${this.state}&scope=${this.scope}&code_challenge=${this.pkceChallenge}&code_challenge_method=S256`;
+		const authUrl = `${url}?client_id=${this.clientID}&redirect_uri=${this.redirectUri}&response_type=code&state=${this.state}&scope=${this.scope}&code_challenge=${this.pkceChallenge}&code_challenge_method=S256`;
+		console.log(authUrl);
+		return authUrl;
 	}
 
 	private _configBase!: string;
 
 	get configBase(): string {
 		if (!this._configBase) {
-			this._configBase = this.baseUrl.split('.').join('_');
+			if (!this.configStore) {
+				return undefined;
+			}
+	
+			this._configBase = this.configStore.get('baseUrl').split('.').join('_');
 		}
 		return this._configBase;
 	}
@@ -83,11 +101,16 @@ export class LoginServer extends vscode.Disposable {
 
 	private static _configStore: Configstore;
 
-	private get configStore(): Configstore {
+	public async init() {
 		if (!LoginServer._configStore) {
-			LoginServer._configStore = new Configstore('@simbachain/truffle');
+			const conf = await getSimbaConfig(this.context);
+			LoginServer._configStore = new Configstore('@simbachain/truffle', null, {
+				configPath: conf
+			});
 		}
+	}
 
+	private get configStore(): Configstore {
 		return LoginServer._configStore;
 	}
 
@@ -100,8 +123,11 @@ export class LoginServer extends vscode.Disposable {
 	}
 
 	hasConfig(key: string): boolean {
+		if (!this.configStore){
+			return null;
+		}
 		if (!this.configStore.has(this.configBase)) {
-			return false;
+			return this.configStore.has(key);
 		}
 
 		return key in this.configStore.get(this.configBase);
@@ -109,10 +135,11 @@ export class LoginServer extends vscode.Disposable {
 
 	getConfig(key: string): any {
 		if (!this.configStore.has(this.configBase)) {
-			return undefined;
+			return this.configStore.get(key);
 		}
 
 		let dict = this.configStore.get(this.configBase);
+
 
 		if (!(key in dict)) {
 			return undefined;
@@ -123,7 +150,8 @@ export class LoginServer extends vscode.Disposable {
 
 	setConfig(key: string, value: any): void {
 		if (!this.configStore.has(this.configBase)) {
-			this.configStore.set(this.configBase, {});
+			this.configStore.set(key, value);
+			return;
 		}
 
 		let dict = this.configStore.get(this.configBase);
@@ -135,6 +163,7 @@ export class LoginServer extends vscode.Disposable {
 
 	deleteConfig(key: string): void {
 		if (!this.configStore.has(this.configBase)) {
+			this.configStore.delete(key);
 			return;
 		}
 
@@ -299,16 +328,16 @@ export class LoginServer extends vscode.Disposable {
 	}
 
 	async receiveCode(code: string, state: string, error: string): Promise<any> {
-		console.log("LoginServer.receiveCode");
+		console.log("LoginServer.receiveCode", code, state, error);
 
 		if (state !== this.state) {
-			await vscode.window.showErrorMessage("Error logging in to SIMBAChain: state does not match");
+			vscode.window.showErrorMessage("Error logging in to SIMBAChain: state does not match");
 			return Promise.reject("Error logging in to SIMBAChain: state does not match");
 		} else if (error) {
-			await vscode.window.showErrorMessage("Error logging in to SIMBAChain: " + error);
+			vscode.window.showErrorMessage("Error logging in to SIMBAChain: " + error);
 			return Promise.reject("Error logging in to SIMBAChain: " + error);
 		} else if (!code) {
-			await vscode.window.showErrorMessage("Error logging in to SIMBAChain: missing auth code");
+			vscode.window.showErrorMessage("Error logging in to SIMBAChain: missing auth code");
 			return Promise.reject("Error logging in to SIMBAChain: missing auth code");
 		} else {
 			var option = {
@@ -318,7 +347,7 @@ export class LoginServer extends vscode.Disposable {
 				form: {
 					"grant_type": "authorization_code",
 					"code": code,
-					"redirect_uri": this.redirectUri,
+					"redirect_uri": decodeURIComponent(this.redirectUri),
 					"code_verifier": this.pkceVerifier,
 					"client_id": this.clientID
 				}
@@ -353,7 +382,7 @@ export class LoginServer extends vscode.Disposable {
 				headers: {
 					'Content-Type': 'application/json',
 					'Accept': 'application/json',
-					'Authorization': `${auth['token_type']} local ${auth['access_token']}`
+					'Authorization': `${auth['token_type']} ${auth['access_token']}`
 				},
 				json: true
 			};

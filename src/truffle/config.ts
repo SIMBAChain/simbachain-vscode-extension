@@ -22,6 +22,10 @@ export function getConfig(context: vscode.ExtensionContext): Promise<string> {
 			}
 		});
 	});
-
-
 }
+
+export async function getSimbaConfig(context: vscode.ExtensionContext): Promise<string> {
+	let cwd = await ProcessRunner.getCWD("Choose the folder with your simba.json inside.");
+	return path.join(cwd.fsPath, "simba.json");
+}
+

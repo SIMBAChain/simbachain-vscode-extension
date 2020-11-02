@@ -17,6 +17,7 @@ function registerCommandWithContext(command: string, context: vscode.ExtensionCo
 export async function activate(context: vscode.ExtensionContext) {
 	/// TODO: Need to be able to set the PySCaaS server endpoint
 	const loginServer = new LoginServer(context);
+	await loginServer.init();
 
 	const simbaContractsProvider = new SimbaContractsProvider(loginServer);
 	const simbaContractsOptions: vscode.TreeViewOptions<TreeItemWithID> = {
