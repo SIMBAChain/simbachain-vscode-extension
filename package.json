@@ -266,7 +266,7 @@
 	"scripts": {
 		"release": "release-it",
 		"version": "auto-changelog -p && git add CHANGELOG.md",
-		"postversion": "npm run package && git add *.vsix",
+		"postversion": "npm run package",
 		"publish": "rm *.vsix && vsce publish",
 		"package": "npm run lint && npm run webpack && vsce package",
 		"vscode:prepublish": "webpack --mode production",
