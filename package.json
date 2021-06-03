@@ -263,7 +263,7 @@
 		}
 	},
 	"scripts": {
-		"release": "release-it",
+		"release": "npx release-it",
 		"version": "auto-changelog -p && git add CHANGELOG.md",
 		"postversion": "npm run package && git add *.vsix",
 		"publish": "rm *.vsix && vsce publish",
