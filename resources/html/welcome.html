@@ -103,21 +103,24 @@
 				<div class="vitem">
 					Welcome to the SIMBAChain Visual Studio Code plugin!
 
-					<p><i>Some intro text here</i></p>
+					<p><i>This plugin allows you to interact with the SIMBAChain Enterprise Platform (SEP) directly from VSCode.</i></p>
 
 					<div class="commands">
-						<div class="command" command="foo">
-							<span>[ICON] | This is a command that does stuff</span>
-							<span>[ICON] | Click me to run, or type &lt;foo&gt;</span>
+						<div class="command loggedout" command="login">
+							<span>Click here to log in and get started!</span>
 						</div>
-						<div class="command" command="bar">
+						<!-- <div class="command" command="bar">
 							<span>[ICON] | This is another command that does stuff</span>
 							<span>[ICON] | Click me to run, or type &lt;bar&gt;</span>
 						</div>
 						<div class="command" command="baz">
 							<span>[ICON] | This is one more command that does stuff</span>
 							<span>[ICON] | Click me to run, or type &lt;baz&gt;</span>
-						</div>
+						</div> -->
+					</div>
+
+					<div class="usage loggedin">
+						You can now navigate to the SIMBAChain icon on the left to view your SEP instance!
 					</div>
 				</div>
 
@@ -131,8 +134,7 @@
 					<footer>
 						<div>
 							Having trouble with the extension? -
-							<a href="#">Browse the documentation</a> -
-							<a href="#">Report an issue</a>
+							<a href="https://github.com/SIMBAChain/simbachain-vscode-extension">Report an issue</a>
 						</div>
 					</footer>
 				</div>
@@ -147,13 +149,41 @@
 			(function() {
 				const vscode = acquireVsCodeApi();
 				const toggle = document.getElementById('showOnStartup');
+				const loggedout_elements  = Array.from(document.getElementsByClassName('loggedout'));
+				const loggedin_elements  = Array.from(document.getElementsByClassName('loggedin'));
+				let loggedIn = false;
+
+				function login(){
+					Array.prototype.map.call(loggedout_elements, tag => {
+						tag.style.display = 'none';
+					})
+					Array.prototype.map.call(loggedin_elements, tag => {
+						tag.style.display = null;
+					})
+				}
+
+				function logout(){
+					Array.prototype.map.call(loggedout_elements, tag => {
+						tag.style.display = null;
+					})
+					Array.prototype.map.call(loggedin_elements, tag => {
+						tag.style.display = 'none';
+					})
+				}
 
 				window.addEventListener('message', event => {
-					alert();
 					console.log("Got Event!", JSON.stringify(event));
 					const message = event.data; // The JSON data our extension sent
 
 					switch (message.command) {
+						case 'userIsLoggedIn':
+							loggedIn = message.state;
+							if(loggedIn){
+								login();
+							}else{
+								logout();
+							}
+							break;
 						case 'setShowOnStartup':
 							toggle.checked = message.checked;
 							break;
@@ -167,7 +197,6 @@
 				for (let element of document.getElementsByClassName('command')){
 					if('command' in element.attributes){
 						element.addEventListener('click', event=>{
-							alert(element.attributes.command.value);
 							vscode.postMessage({ command: element.attributes.command.value});
 						});
 					}

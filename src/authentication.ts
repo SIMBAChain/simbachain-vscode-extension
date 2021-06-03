@@ -224,7 +224,7 @@ export class LoginServer extends vscode.Disposable {
 
 			this.server.on('close', () => {
 				this.server = null;
-				resolve();
+				resolve(void 0);
 			});
 
 			polka({server: this.server})

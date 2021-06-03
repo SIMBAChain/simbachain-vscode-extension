@@ -1,28 +1,32 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { LoginServer } from '../authentication';
 
 export class WelcomePage extends vscode.Disposable {
 	protected readonly ShowOnStartupConfig: string = 'WelcomeShowOnStartup';
 	protected panel: vscode.WebviewPanel;
 	protected readonly context: vscode.ExtensionContext;
 	protected hasLoaded: boolean = false;
+	protected loginServer: LoginServer;
 
-	constructor(context: vscode.ExtensionContext) {
+	constructor(context: vscode.ExtensionContext, loginServer: LoginServer) {
 		super(() => {
 			this.panel.dispose();
 		});
 		this.context = context;
+		this.loginServer = loginServer;
 	}
 
 	public async checkAndShow(): Promise<void> {
 		const showOnStartup = this.context.globalState.get(this.ShowOnStartupConfig);
 
-		if (showOnStartup === false) {
-			return;
+		if (showOnStartup === undefined) {
+			this.context.globalState.update(this.ShowOnStartupConfig, true);
+			return await this.show();
 		}
 
-		if (showOnStartup === undefined) {
-			this.context.globalState.update(this.ShowOnStartupConfig, false);
+		if (showOnStartup === false) {
+			return;
 		}
 
 		await this.show();
@@ -59,7 +63,18 @@ export class WelcomePage extends vscode.Disposable {
 						command: 'setShowOnStartup',
 						checked: this.context.globalState.get(this.ShowOnStartupConfig)
 					});
+					this.hasLoaded = true;
+					this.panel.webview.postMessage({
+						command: 'userIsLoggedIn',
+						state: this.loginServer.isLoggedIn
+					});
 					break;
+				}
+				case("isUserLoggedIn"): {
+					this.panel.webview.postMessage({
+						command: 'userIsLoggedIn',
+						state: this.loginServer.isLoggedIn
+					});
 				}
 				default: {
 					vscode.window.showInformationMessage("Command: " + message.command);

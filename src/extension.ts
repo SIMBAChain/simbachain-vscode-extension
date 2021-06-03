@@ -46,7 +46,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	registerCommandWithContext('simbaContracts.compile', context, Compile);
 	registerCommandWithContext('simbaContracts.upload', context, Upload);
 
-	const welcomePage = new WelcomePage(context);
+	const welcomePage = new WelcomePage(context, loginServer);
 
 	await welcomePage.checkAndShow();
 
