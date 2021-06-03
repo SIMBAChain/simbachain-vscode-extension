@@ -9,4 +9,6 @@ tsconfig.json
 vsc-extension-quickstart.md
 node_modules/**
 MetaCoin/**
-dist/
+**/*.ts
+**/tsconfig.json
+.idea
