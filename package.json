@@ -243,7 +243,13 @@
 			]
 		}
 	},
+	"auto-changelog": {
+	  "template": "keepachangelog",
+	  "commitLimit": false
+	},
 	"scripts": {
+		"version": "auto-changelog -p && git add CHANGELOG.md",
+		"postversion": "npm run package && git add *.vsix",
 		"publish": "vsce publish",
 		"package": "npm run lint && npm run webpack && vsce package",
 		"vscode:prepublish": "webpack --mode production",
@@ -257,6 +263,7 @@
 		"@types/node": "^10.12.21",
 		"@types/rimraf": "^2.0.2",
 		"@types/vscode": "^1.42.0",
+		"auto-changelog": "^2.3.0",
 		"ts-loader": "^6.2.1",
 		"tslint": "^5.12.1",
 		"typescript": "^3.5.1",
