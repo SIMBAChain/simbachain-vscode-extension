@@ -2,11 +2,10 @@
 	"name": "simbachain-vscode-extension",
 	"displayName": "SIMBAChain VSCode Extension",
 	"description": "SIMBAChain VSCode Extension",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"publisher": "SIMBAChain",
 	"repository": "https://github.com/SIMBAChain/simbachain-vscode-extension",
 	"license": "MIT",
-	"enableProposedApi": true,
 	"engines": {
 		"vscode": "^1.42.0"
 	},
@@ -261,7 +260,7 @@
 		"ts-loader": "^6.2.1",
 		"tslint": "^5.12.1",
 		"typescript": "^3.5.1",
-		"vsce": "^1.81.1",
+		"vsce": "^1.91.0",
 		"webpack": "^4.42.0",
 		"webpack-cli": "^3.3.11"
 	},
