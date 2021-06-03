@@ -2,7 +2,7 @@
 	"name": "simbachain-vscode-extension",
 	"displayName": "SIMBAChain VSCode Extension",
 	"description": "SIMBAChain VSCode Extension",
-	"version": "1.0.2",
+	"version": "1.1.0",
 	"publisher": "SIMBAChain",
 	"repository": "https://github.com/SIMBAChain/simbachain-vscode-extension",
 	"license": "MIT",
@@ -244,8 +244,8 @@
 		}
 	},
 	"auto-changelog": {
-	  "template": "keepachangelog",
-	  "commitLimit": false
+		"template": "keepachangelog",
+		"commitLimit": false
 	},
 	"scripts": {
 		"version": "auto-changelog -p && git add CHANGELOG.md",
