@@ -249,21 +249,22 @@
 	},
 	"release-it":{
 		"git": {
-			"changelog": "npx auto-changelog --stdout --commit-limit false --unreleased --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs"
+			"changelog": "auto-changelog --stdout --commit-limit false --unreleased --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs"
 		},
 		"github": {
 			"release": true,
-			"assets": ["*.vsix"]
+			"assets": ["*.vsix"],
+			"tokenRef": "RELEASE_IT_GITHUB_TOKEN"
 		},
 		"hooks": {
-		  	"after:bump": "npx auto-changelog -p"
+		  	"after:bump": "auto-changelog -p"
 		},
 		"npm": {
 			"publish": false
 		}
 	},
 	"scripts": {
-		"release": "npx release-it",
+		"release": "release-it",
 		"version": "auto-changelog -p && git add CHANGELOG.md",
 		"postversion": "npm run package && git add *.vsix",
 		"publish": "rm *.vsix && vsce publish",
@@ -280,6 +281,7 @@
 		"@types/rimraf": "^2.0.2",
 		"@types/vscode": "^1.42.0",
 		"auto-changelog": "^2.3.0",
+		"release-it": "^14.7.0",
 		"ts-loader": "^6.2.1",
 		"tslint": "^5.12.1",
 		"typescript": "^3.5.1",
