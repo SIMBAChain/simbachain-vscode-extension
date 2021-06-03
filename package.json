@@ -2,7 +2,7 @@
 	"name": "simbachain-vscode-extension",
 	"displayName": "SIMBAChain VSCode Extension",
 	"description": "SIMBAChain VSCode Extension",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"publisher": "SIMBAChain",
 	"repository": "https://github.com/SIMBAChain/simbachain-vscode-extension",
 	"license": "MIT",
@@ -247,17 +247,19 @@
 		"template": "keepachangelog",
 		"commitLimit": false
 	},
-	"release-it":{
+	"release-it": {
 		"git": {
 			"changelog": "auto-changelog --stdout --commit-limit false --unreleased --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs"
 		},
 		"github": {
 			"release": true,
-			"assets": ["*.vsix"],
+			"assets": [
+				"*.vsix"
+			],
 			"tokenRef": "RELEASE_IT_GITHUB_TOKEN"
 		},
 		"hooks": {
-		  	"after:bump": "auto-changelog -p"
+			"after:bump": "auto-changelog -p"
 		},
 		"npm": {
 			"publish": false
