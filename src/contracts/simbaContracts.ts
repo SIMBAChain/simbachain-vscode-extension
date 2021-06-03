@@ -24,7 +24,12 @@ export class SimbaContractsProvider extends SimbaProvider {
 				title: "Loading more organisations",
 				location: vscode.ProgressLocation.Notification
 			}, async (progress, token) => {
-				return await this.loadMoreOrganisations(next);
+				try{
+					return await this.loadMoreOrganisations(next);
+				}catch(e){
+					console.error("Failed to fetch organisations", e);
+					throw e;
+				}
 			});
 		});
 	}

@@ -87,7 +87,7 @@ export abstract class SimbaProvider extends vscode.Disposable implements vscode.
 
 		this._organisations = this._organisations.filter(org => org.contextValue !== 'next');
 
-		let resp = await this.loginServer.doGetRequest(next);
+		let resp = await this.loginServer.doGetRequest(next.url);
 		this._organisations = this._organisations.concat(resp.results.map(org => {
 			return new Organisation(
 				org['name'],
