@@ -247,10 +247,22 @@
 		"template": "keepachangelog",
 		"commitLimit": false
 	},
+	"release-it":{
+		"git": {
+			"changelog": "npx auto-changelog --stdout --commit-limit false --unreleased --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs"
+		},
+		"github": {
+		  "release": true,
+		  "assets": ["*.vsix"]
+		},
+		"hooks": {
+		  "after:bump": "npx auto-changelog -p"
+		}
+	},
 	"scripts": {
 		"version": "auto-changelog -p && git add CHANGELOG.md",
 		"postversion": "npm run package && git add *.vsix",
-		"publish": "vsce publish",
+		"publish": "rm *.vsix && vsce publish",
 		"package": "npm run lint && npm run webpack && vsce package",
 		"vscode:prepublish": "webpack --mode production",
 		"webpack": "webpack --mode development",
